@@ -58,6 +58,11 @@ public class MainActivity extends AppCompatActivity {
 
         Button btn = findViewById(R.id.btnAdicionarCliente);
         btn.setOnClickListener(v -> mostrarDialogoNovoCliente());
+
+        findViewById(R.id.btnHistorico).setOnClickListener(v -> {
+            startActivity(new Intent(this, HistoricoActivity.class));
+        });
+
     }
 
     private void filtrarClientes(String texto) {

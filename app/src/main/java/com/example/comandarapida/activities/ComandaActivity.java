@@ -132,13 +132,33 @@ public class ComandaActivity extends AppCompatActivity {
     private void finalizarConta() {
         new AlertDialog.Builder(this)
                 .setTitle("Finalizar Conta")
-                .setMessage("Deseja finalizar e apagar os itens deste cliente?")
+                .setMessage("Deseja finalizar e salvar os itens desta comanda?")
                 .setPositiveButton("Sim", (dialog, which) -> {
                     SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+                    // Buscar os itens da comanda atual
+                    Cursor cursor = db.rawQuery("SELECT descricao, quantidade, preco FROM itens WHERE cliente_id = ?", new String[]{String.valueOf(clienteId)});
+                    while (cursor.moveToNext()) {
+                        String desc = cursor.getString(0);
+                        int qtd = cursor.getInt(1);
+                        double preco = cursor.getDouble(2);
+
+                        ContentValues v = new ContentValues();
+                        v.put("cliente_nome", clienteNome);
+                        v.put("descricao", desc);
+                        v.put("quantidade", qtd);
+                        v.put("preco", preco);
+                        v.put("data_hora", String.valueOf(System.currentTimeMillis()));
+                        db.insert("itens_fechados", null, v);
+                    }
+                    cursor.close();
+
+                    // Apagar da tabela principal
                     db.delete("itens", "cliente_id = ?", new String[]{String.valueOf(clienteId)});
                     carregarItens();
                 })
-                .setNegativeButton("Não", null)
+                .setNegativeButton("Cancelar", null)
                 .show();
     }
+
 }

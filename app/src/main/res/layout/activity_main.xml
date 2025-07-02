@@ -11,6 +11,13 @@
         android:layout_height="wrap_content"
         android:text="Novo Cliente" />
 
+    <Button
+        android:id="@+id/btnHistorico"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Histórico de Contas Finalizadas"
+        android:layout_marginTop="8dp"/>
+
     <androidx.appcompat.widget.SearchView
         android:id="@+id/searchCliente"
         android:layout_width="match_parent"
