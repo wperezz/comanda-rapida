@@ -31,6 +31,16 @@
         android:padding="8dp"
         android:textStyle="bold" />
 
+    <TextView
+        android:id="@+id/txtResumo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:paddingTop="8dp"
+        android:text="Resumo: "
+        android:textSize="16sp"
+        android:textStyle="italic" />
+
     <Button
         android:id="@+id/btnAdicionarItem"
         android:layout_width="match_parent"

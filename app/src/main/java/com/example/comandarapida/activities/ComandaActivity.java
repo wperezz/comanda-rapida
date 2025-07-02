@@ -30,6 +30,7 @@ public class ComandaActivity extends AppCompatActivity {
     String clienteNome;
 
     TextView txtTotal;
+    TextView txtResumo;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -40,6 +41,8 @@ public class ComandaActivity extends AppCompatActivity {
         dbHelper = new DBHelper(this);
         clienteId = getIntent().getIntExtra("cliente_id", -1);
         clienteNome = getIntent().getStringExtra("cliente_nome");
+
+        txtResumo = findViewById(R.id.txtResumo);
 
         TextView txtNomeCliente = findViewById(R.id.txtNomeCliente);
         txtNomeCliente.setText("Cliente: " + clienteNome);
@@ -81,12 +84,19 @@ public class ComandaActivity extends AppCompatActivity {
         calcularTotal();
     }
 
+    @SuppressLint("DefaultLocale")
     private void calcularTotal() {
         double total = 0;
+        int totalItens = 0;
+
         for (Item item : itens) {
             total += item.getTotal();
+            totalItens += item.quantidade;
         }
         txtTotal.setText(String.format("Total: R$ %.2f", total));
+        String resumo = String.format("Total de itens: %d", totalItens);
+
+        txtResumo.setText(resumo);
     }
 
     private void mostrarDialogoNovoItem() {
