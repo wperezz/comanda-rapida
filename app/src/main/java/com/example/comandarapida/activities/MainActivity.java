@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -62,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btnHistorico).setOnClickListener(v -> {
             startActivity(new Intent(this, HistoricoActivity.class));
         });
+
+        findViewById(R.id.btnZerarTudo).setOnClickListener(v -> mostrarDialogoSenha());
 
     }
 
@@ -116,4 +120,33 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("cliente_nome", cliente.nome);
         startActivity(intent);
     }
+
+    private void mostrarDialogoSenha() {
+        EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+
+        new AlertDialog.Builder(this)
+                .setTitle("Digite a senha para apagar tudo")
+                .setView(input)
+                .setPositiveButton("Confirmar", (dialog, which) -> {
+                    String senha = input.getText().toString();
+                    if (senha.equals("admin123")) {
+                        apagarTudo();
+                    } else {
+                        Toast.makeText(this, "Senha incorreta", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+    private void apagarTudo() {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db.delete("itens", null, null);
+        db.delete("clientes", null, null);
+        db.delete("itens_fechados", null, null);
+        carregarClientes();
+        Toast.makeText(this, "Dados apagados com sucesso!", Toast.LENGTH_SHORT).show();
+    }
+
 }
