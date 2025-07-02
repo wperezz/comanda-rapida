@@ -9,7 +9,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
+        android:theme="@style/Theme.ComandaRapida">
 
         <activity android:name=".activities.ComandaActivity" />
         <activity android:name=".activities.HistoricoActivity" />

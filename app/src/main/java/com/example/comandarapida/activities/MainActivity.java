@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -36,6 +37,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+
         dbHelper = new DBHelper(this);
 
         RecyclerView recycler = findViewById(R.id.recyclerClientes);
@@ -61,14 +65,13 @@ public class MainActivity extends AppCompatActivity {
         Button btn = findViewById(R.id.btnAdicionarCliente);
         btn.setOnClickListener(v -> mostrarDialogoNovoCliente());
 
-        findViewById(R.id.btnHistorico).setOnClickListener(v -> {
-            startActivity(new Intent(this, HistoricoActivity.class));
-        });
+        findViewById(R.id.btnHistorico).setOnClickListener(v -> startActivity(new Intent(this, HistoricoActivity.class)));
 
         findViewById(R.id.btnZerarTudo).setOnClickListener(v -> mostrarDialogoSenha());
 
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private void filtrarClientes(String texto) {
         clientes.clear();
         for (Cliente c : todosClientes) {
