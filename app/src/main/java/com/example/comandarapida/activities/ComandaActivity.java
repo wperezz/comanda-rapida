@@ -19,6 +19,7 @@ import com.example.comandarapida.models.Item;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ComandaActivity extends AppCompatActivity {
 
@@ -35,7 +36,7 @@ public class ComandaActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comanda);
-
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         dbHelper = new DBHelper(this);
         clienteId = getIntent().getIntExtra("cliente_id", -1);
         clienteNome = getIntent().getStringExtra("cliente_nome");
@@ -54,6 +55,12 @@ public class ComandaActivity extends AppCompatActivity {
 
         findViewById(R.id.btnAdicionarItem).setOnClickListener(v -> mostrarDialogoNovoItem());
         findViewById(R.id.btnFinalizar).setOnClickListener(v -> finalizarConta());
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 
     private void carregarItens() {

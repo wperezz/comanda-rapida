@@ -11,6 +11,12 @@
         android:layout_height="wrap_content"
         android:text="Novo Cliente" />
 
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/searchCliente"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:queryHint="Buscar cliente..." />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerClientes"
         android:layout_width="match_parent"

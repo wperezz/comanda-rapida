@@ -11,6 +11,7 @@ import android.text.InputType;
 import android.widget.Button;
 import android.widget.EditText;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     DBHelper dbHelper;
     List<Cliente> clientes = new ArrayList<>();
     ClienteAdapter adapter;
+    List<Cliente> todosClientes = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,20 +42,46 @@ public class MainActivity extends AppCompatActivity {
         recycler.setAdapter(adapter);
 
         carregarClientes();
+        SearchView searchView = findViewById(R.id.searchCliente);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false; // Não usaremos o "submit"
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filtrarClientes(newText);
+                return true;
+            }
+        });
 
         Button btn = findViewById(R.id.btnAdicionarCliente);
         btn.setOnClickListener(v -> mostrarDialogoNovoCliente());
     }
 
+    private void filtrarClientes(String texto) {
+        clientes.clear();
+        for (Cliente c : todosClientes) {
+            if (c.nome.toLowerCase().contains(texto.toLowerCase())) {
+                clientes.add(c);
+            }
+        }
+        adapter.notifyDataSetChanged();
+    }
+
     @SuppressLint("NotifyDataSetChanged")
     private void carregarClientes() {
+        todosClientes.clear();
         clientes.clear();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM clientes", null);
         while (cursor.moveToNext()) {
-            clientes.add(new Cliente(cursor.getInt(0), cursor.getString(1)));
+            Cliente c = new Cliente(cursor.getInt(0), cursor.getString(1));
+            todosClientes.add(c);
         }
         cursor.close();
+        clientes.addAll(todosClientes);
         adapter.notifyDataSetChanged();
     }
 
