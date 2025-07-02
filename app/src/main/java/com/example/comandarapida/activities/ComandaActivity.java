@@ -8,6 +8,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.InputType;
 import android.widget.*;
+
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -58,14 +60,32 @@ public class ComandaActivity extends AppCompatActivity {
 
         findViewById(R.id.btnAdicionarItem).setOnClickListener(v -> mostrarDialogoNovoItem());
         findViewById(R.id.btnFinalizar).setOnClickListener(v -> finalizarConta());
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (!itens.isEmpty()) {
+                    new AlertDialog.Builder(ComandaActivity.this)
+                            .setTitle("Sair sem finalizar?")
+                            .setMessage("Esta comanda ainda possui itens.\nTem certeza que deseja sair sem finalizar?")
+                            .setPositiveButton("Sim, sair", (dialog, which) -> finish())
+                            .setNegativeButton("Cancelar", null)
+                            .show();
+                } else {
+                    finish();
+                }
+            }
+        });
+
     }
 
     @Override
     public boolean onSupportNavigateUp() {
-        finish();
+        getOnBackPressedDispatcher().onBackPressed();
         return true;
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private void carregarItens() {
         itens.clear();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
