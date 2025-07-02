@@ -24,6 +24,10 @@ public class DBHelper extends SQLiteOpenHelper {
                 "quantidade INTEGER, " +
                 "preco REAL, " +
                 "data_hora TEXT)");
+        db.execSQL("CREATE TABLE catalogo_itens (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "descricao TEXT, " +
+                "preco REAL)");
     }
 
     @Override

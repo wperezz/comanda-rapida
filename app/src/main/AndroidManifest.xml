@@ -13,6 +13,7 @@
 
         <activity android:name=".activities.ComandaActivity" />
         <activity android:name=".activities.HistoricoActivity" />
+        <activity android:name=".activities.CadastroItemActivity" />
 
         <activity
             android:name=".activities.MainActivity"

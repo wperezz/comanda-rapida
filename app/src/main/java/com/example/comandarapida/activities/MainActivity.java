@@ -69,6 +69,10 @@ public class MainActivity extends AppCompatActivity {
 
         findViewById(R.id.btnZerarTudo).setOnClickListener(v -> mostrarDialogoSenha());
 
+        findViewById(R.id.btnCadastrarItem).setOnClickListener(v -> {
+            startActivity(new Intent(this, CadastroItemActivity.class));
+        });
+
     }
 
     @SuppressLint("NotifyDataSetChanged")

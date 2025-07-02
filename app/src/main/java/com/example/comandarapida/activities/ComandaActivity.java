@@ -119,45 +119,60 @@ public class ComandaActivity extends AppCompatActivity {
         txtResumo.setText(resumo);
     }
 
+    @SuppressLint("DefaultLocale")
     private void mostrarDialogoNovoItem() {
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setPadding(16, 16, 16, 16);
 
-        EditText edtDescricao = new EditText(this);
-        edtDescricao.setHint("Descrição");
-        layout.addView(edtDescricao);
+        Spinner spinnerItens = new Spinner(this);
+        List<String> listaNomes = new ArrayList<>();
+        List<Item> catalogo = new ArrayList<>();
+
+        // Buscar do banco
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT id, descricao, preco FROM catalogo_itens", null);
+        while (cursor.moveToNext()) {
+            Item i = new Item(cursor.getInt(0), 0, cursor.getString(1), 1, cursor.getDouble(2));
+            catalogo.add(i);
+            listaNomes.add(i.descricao + " (R$ " + String.format("%.2f", i.preco) + ")");
+        }
+        cursor.close();
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, listaNomes);
+        spinnerItens.setAdapter(adapter);
+        layout.addView(spinnerItens);
 
         EditText edtQtd = new EditText(this);
         edtQtd.setHint("Quantidade");
         edtQtd.setInputType(InputType.TYPE_CLASS_NUMBER);
         layout.addView(edtQtd);
 
-        EditText edtPreco = new EditText(this);
-        edtPreco.setHint("Preço");
-        edtPreco.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_CLASS_NUMBER);
-        layout.addView(edtPreco);
-
         new AlertDialog.Builder(this)
-                .setTitle("Novo Item")
+                .setTitle("Adicionar item à comanda")
                 .setView(layout)
                 .setPositiveButton("Adicionar", (dialog, which) -> {
-                    String descricao = edtDescricao.getText().toString().trim();
-                    int quantidade = Integer.parseInt(edtQtd.getText().toString().trim());
-                    double preco = Double.parseDouble(edtPreco.getText().toString().trim());
+                    int pos = spinnerItens.getSelectedItemPosition();
+                    if (pos >= 0 && !edtQtd.getText().toString().trim().isEmpty()) {
+                        Item escolhido = catalogo.get(pos);
+                        int qtd = Integer.parseInt(edtQtd.getText().toString().trim());
 
-                    SQLiteDatabase db = dbHelper.getWritableDatabase();
-                    ContentValues values = new ContentValues();
-                    values.put("cliente_id", clienteId);
-                    values.put("descricao", descricao);
-                    values.put("quantidade", quantidade);
-                    values.put("preco", preco);
-                    db.insert("itens", null, values);
+                        ContentValues values = new ContentValues();
+                        values.put("cliente_id", clienteId);
+                        values.put("descricao", escolhido.descricao);
+                        values.put("quantidade", qtd);
+                        values.put("preco", escolhido.preco);
 
-                    carregarItens();
+                        SQLiteDatabase db2 = dbHelper.getWritableDatabase();
+                        db2.insert("itens", null, values);
+
+                        carregarItens();
+                    }
                 })
                 .setNegativeButton("Cancelar", null)
                 .show();
     }
+
 
     private void finalizarConta() {
         new AlertDialog.Builder(this)

@@ -12,6 +12,13 @@
         android:text="Novo Cliente" />
 
     <Button
+        android:id="@+id/btnCadastrarItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cadastrar Itens"
+        android:layout_marginTop="8dp" />
+
+    <Button
         android:id="@+id/btnHistorico"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
