@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -44,9 +45,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SharedPreferences prefs = getSharedPreferences("comanda_config", MODE_PRIVATE);
+        boolean modoEscuro = prefs.getBoolean("modo_escuro", false);
+        AppCompatDelegate.setDefaultNightMode(modoEscuro ?
+                AppCompatDelegate.MODE_NIGHT_YES :
+                AppCompatDelegate.MODE_NIGHT_NO);
+
         setContentView(R.layout.activity_main);
 
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+//        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
 
         dbHelper = new DBHelper(this);
 
@@ -90,6 +97,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(this, HistoricoActivity.class));
             } else if (id == R.id.nav_zerar_tudo) {
                 mostrarDialogoSenha();
+            }else if (id == R.id.nav_configuracoes) {
+                startActivity(new Intent(this, ConfiguracoesActivity.class));
             }
 
             drawerLayout.closeDrawers();
@@ -167,7 +176,10 @@ public class MainActivity extends AppCompatActivity {
                 .setView(input)
                 .setPositiveButton("Confirmar", (dialog, which) -> {
                     String senha = input.getText().toString();
-                    if (senha.equals("admin123")) {
+                    SharedPreferences prefs = getSharedPreferences("comanda_config", MODE_PRIVATE);
+                    String senhaSalva = prefs.getString("senha_zerar", "admin123");
+                    if (senha.equals(senhaSalva))
+                    {
                         apagarTudo();
                     } else {
                         Toast.makeText(this, "Senha incorreta", Toast.LENGTH_SHORT).show();

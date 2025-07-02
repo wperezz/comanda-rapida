@@ -16,4 +16,8 @@
         android:id="@+id/nav_zerar_tudo"
         android:title="Zerar Tudo"
         android:icon="@android:drawable/ic_menu_delete" />
+    <item
+        android:id="@+id/nav_configuracoes"
+        android:title="Configurações"
+        android:icon="@android:drawable/ic_menu_preferences" />
 </menu>
