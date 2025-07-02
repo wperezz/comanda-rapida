@@ -8,13 +8,17 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.InputType;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.SearchView;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,9 +26,11 @@ import com.example.comandarapida.R;
 import com.example.comandarapida.adapters.ClienteAdapter;
 import com.example.comandarapida.database.DBHelper;
 import com.example.comandarapida.models.Cliente;
+import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,7 +38,9 @@ public class MainActivity extends AppCompatActivity {
     List<Cliente> clientes = new ArrayList<>();
     ClienteAdapter adapter;
     List<Cliente> todosClientes = new ArrayList<>();
-
+    DrawerLayout drawerLayout;
+    NavigationView navView;
+    ActionBarDrawerToggle toggle;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,17 +70,39 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button btn = findViewById(R.id.btnAdicionarCliente);
-        btn.setOnClickListener(v -> mostrarDialogoNovoCliente());
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navView = findViewById(R.id.nav_view);
 
-        findViewById(R.id.btnHistorico).setOnClickListener(v -> startActivity(new Intent(this, HistoricoActivity.class)));
+        toggle = new ActionBarDrawerToggle(
+                this, drawerLayout, R.string.drawer_open, R.string.drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-        findViewById(R.id.btnZerarTudo).setOnClickListener(v -> mostrarDialogoSenha());
+        navView.setNavigationItemSelectedListener(item -> {
+            int id = item.getItemId();
 
-        findViewById(R.id.btnCadastrarItem).setOnClickListener(v -> {
-            startActivity(new Intent(this, CadastroItemActivity.class));
+            if (id == R.id.nav_novo_cliente) {
+                mostrarDialogoNovoCliente();
+            } else if (id == R.id.nav_cadastrar_item) {
+                startActivity(new Intent(this, CadastroItemActivity.class));
+            } else if (id == R.id.nav_historico) {
+                startActivity(new Intent(this, HistoricoActivity.class));
+            } else if (id == R.id.nav_zerar_tudo) {
+                mostrarDialogoSenha();
+            }
+
+            drawerLayout.closeDrawers();
+            return true;
         });
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (toggle != null && toggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @SuppressLint("NotifyDataSetChanged")
