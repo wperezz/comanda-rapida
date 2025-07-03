@@ -22,24 +22,14 @@
         android:layout_weight="1"/>
 
     <TextView
-        android:id="@+id/txtTotal"
+        android:id="@+id/txtResumoComanda"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Total: R$ 0,00"
-        android:textSize="18sp"
         android:gravity="end"
-        android:padding="8dp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/txtResumo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:paddingTop="8dp"
-        android:text="Resumo: "
-        android:textSize="16sp"
-        android:textStyle="italic" />
+        android:text="Resumo: 0 itens • 0 und • R$ 0,00"
+        android:textColor="?android:textColorPrimary"
+        android:textStyle="bold" />
 
     <Button
         android:id="@+id/btnAdicionarItem"

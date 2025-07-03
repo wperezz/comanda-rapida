@@ -18,4 +18,8 @@ public class Item {
     public double getTotal() {
         return quantidade * preco;
     }
+
+    public int getQuantidade() {
+        return quantidade;
+    }
 }

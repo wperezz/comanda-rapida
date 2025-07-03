@@ -31,8 +31,7 @@ public class ComandaActivity extends AppCompatActivity {
     int clienteId;
     String clienteNome;
 
-    TextView txtTotal;
-    TextView txtResumo;
+    TextView txtResumoComanda;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -44,17 +43,16 @@ public class ComandaActivity extends AppCompatActivity {
         clienteId = getIntent().getIntExtra("cliente_id", -1);
         clienteNome = getIntent().getStringExtra("cliente_nome");
 
-        txtResumo = findViewById(R.id.txtResumo);
-
         TextView txtNomeCliente = findViewById(R.id.txtNomeCliente);
         txtNomeCliente.setText("Cliente: " + clienteNome);
-
-        txtTotal = findViewById(R.id.txtTotal);
 
         RecyclerView recycler = findViewById(R.id.recyclerItens);
         recycler.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ItemAdapter(itens);
         recycler.setAdapter(adapter);
+
+        txtResumoComanda = findViewById(R.id.txtResumoComanda);
+        atualizarResumo(); // chama após carregar a comanda
 
         carregarItens();
 
@@ -85,6 +83,21 @@ public class ComandaActivity extends AppCompatActivity {
         return true;
     }
 
+    private void atualizarResumo() {
+        int totalItens = itens.size();
+        int quantidadeTotal = 0;
+        double valorTotal = 0.0;
+
+        for (Item item : itens) {
+            valorTotal += item.getTotal();
+            quantidadeTotal += item.getQuantidade();
+        }
+
+        @SuppressLint("DefaultLocale") String resumo = String.format("Resumo: %d itens • %d und • R$ %.2f",
+                totalItens, quantidadeTotal, valorTotal);
+        txtResumoComanda.setText(resumo);
+    }
+
     @SuppressLint("NotifyDataSetChanged")
     private void carregarItens() {
         itens.clear();
@@ -101,22 +114,7 @@ public class ComandaActivity extends AppCompatActivity {
         }
         cursor.close();
         adapter.notifyDataSetChanged();
-        calcularTotal();
-    }
-
-    @SuppressLint("DefaultLocale")
-    private void calcularTotal() {
-        double total = 0;
-        int totalItens = 0;
-
-        for (Item item : itens) {
-            total += item.getTotal();
-            totalItens += item.quantidade;
-        }
-        txtTotal.setText(String.format("Total: R$ %.2f", total));
-        String resumo = String.format("Total de itens: %d", totalItens);
-
-        txtResumo.setText(resumo);
+        atualizarResumo();
     }
 
     @SuppressLint("DefaultLocale")
