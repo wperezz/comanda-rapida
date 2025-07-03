@@ -2,4 +2,8 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="cor_card_fundo">#FFFFFF</color>
+    <color name="cor_card_texto">#000000</color>
+    <color name="cor_borda_search">#DDDDDD</color>
+    <color name="cor_search_fundo">#FFFFFF</color>
 </resources>

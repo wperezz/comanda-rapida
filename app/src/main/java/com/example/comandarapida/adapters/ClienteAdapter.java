@@ -3,6 +3,7 @@ package com.example.comandarapida.adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -35,7 +36,7 @@ public class ClienteAdapter extends RecyclerView.Adapter<ClienteAdapter.ViewHold
     public void onBindViewHolder(@NonNull ClienteAdapter.ViewHolder holder, int position) {
         Cliente cliente = lista.get(position);
         holder.txtNome.setText(cliente.nome);
-        holder.itemView.setOnClickListener(v -> listener.onItemClick(cliente));
+        holder.layoutCliente.setOnClickListener(v -> listener.onItemClick(cliente));
     }
 
     @Override
@@ -45,9 +46,11 @@ public class ClienteAdapter extends RecyclerView.Adapter<ClienteAdapter.ViewHold
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView txtNome;
+        LinearLayout layoutCliente;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            layoutCliente = itemView.findViewById(R.id.layoutCliente);
             txtNome = itemView.findViewById(R.id.txtNomeCliente);
         }
     }
