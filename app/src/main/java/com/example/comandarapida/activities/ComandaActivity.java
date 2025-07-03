@@ -57,7 +57,6 @@ public class ComandaActivity extends AppCompatActivity {
                 });
         recycler.setAdapter(adapter);
 
-        txtResumoComanda = findViewById(R.id.txtResumoComanda);
         atualizarResumo(); // chama após carregar a comanda
 
         carregarItens();
@@ -140,6 +139,7 @@ public class ComandaActivity extends AppCompatActivity {
                 .show();
     }
 
+    @SuppressLint({"SetTextI18n", "DefaultLocale"})
     private void atualizarResumo() {
         int totalItens = itens.size();
         int quantidadeTotal = 0;
@@ -150,9 +150,11 @@ public class ComandaActivity extends AppCompatActivity {
             quantidadeTotal += item.getQuantidade();
         }
 
-        @SuppressLint("DefaultLocale") String resumo = String.format("Resumo: %d itens • %d und • R$ %.2f",
-                totalItens, quantidadeTotal, valorTotal);
-        txtResumoComanda.setText(resumo);
+        TextView txtQtd = findViewById(R.id.txtResumoQtd);
+        TextView txtValor = findViewById(R.id.txtResumoValor);
+
+        txtQtd.setText("Resumo: " + totalItens + " itens • " + quantidadeTotal + " und");
+        txtValor.setText(String.format("R$ %.2f", valorTotal));
     }
 
     @SuppressLint("NotifyDataSetChanged")

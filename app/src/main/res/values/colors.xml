@@ -6,4 +6,5 @@
     <color name="cor_card_texto">#000000</color>
     <color name="cor_borda_search">#DDDDDD</color>
     <color name="cor_search_fundo">#FFFFFF</color>
+    <color name="green">#4CAF50</color> <!-- Verde Material Design -->
 </resources>
