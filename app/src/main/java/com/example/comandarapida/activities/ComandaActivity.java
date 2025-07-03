@@ -19,8 +19,11 @@ import com.example.comandarapida.adapters.ItemAdapter;
 import com.example.comandarapida.database.DBHelper;
 import com.example.comandarapida.models.Item;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 public class ComandaActivity extends AppCompatActivity {
@@ -118,7 +121,7 @@ public class ComandaActivity extends AppCompatActivity {
                     values.put("quantidade", novaQtd);
 
                     SQLiteDatabase db = dbHelper.getWritableDatabase();
-                    db.update("itens", values, "id = ?", new String[]{String.valueOf(item.id)});
+                    db.update("itens_comanda", values, "id = ?", new String[]{String.valueOf(item.id)});
 
                     carregarItens();
                 })
@@ -132,7 +135,7 @@ public class ComandaActivity extends AppCompatActivity {
                 .setMessage("Deseja realmente excluir este item?")
                 .setPositiveButton("Sim", (dialog, which) -> {
                     SQLiteDatabase db = dbHelper.getWritableDatabase();
-                    db.delete("itens", "id = ?", new String[]{String.valueOf(item.id)});
+                    db.delete("itens_comanda", "id = ?", new String[]{String.valueOf(item.id)});
                     carregarItens();
                 })
                 .setNegativeButton("Cancelar", null)
@@ -161,7 +164,7 @@ public class ComandaActivity extends AppCompatActivity {
     private void carregarItens() {
         itens.clear();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM itens WHERE cliente_id = ?", new String[]{String.valueOf(clienteId)});
+        Cursor cursor = db.rawQuery("SELECT * FROM itens_comanda WHERE cliente_id = ?", new String[]{String.valueOf(clienteId)});
         while (cursor.moveToNext()) {
             itens.add(new Item(
                     cursor.getInt(0),
@@ -219,12 +222,12 @@ public class ComandaActivity extends AppCompatActivity {
                         values.put("descricao", escolhido.descricao);
                         values.put("quantidade", qtd);
                         values.put("preco", escolhido.preco);
-
+                        values.put("data_hora", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date()));
                         SQLiteDatabase db2 = dbHelper.getWritableDatabase();
 
                         // Verificar se o item já existe na comanda do cliente
                         Cursor cursorCheck = db2.rawQuery(
-                                "SELECT id, quantidade FROM itens WHERE cliente_id = ? AND descricao = ? AND preco = ?",
+                                "SELECT id, quantidade FROM itens_comanda WHERE cliente_id = ? AND descricao = ? AND preco = ?",
                                 new String[]{String.valueOf(clienteId), escolhido.descricao, String.valueOf(escolhido.preco)}
                         );
 
@@ -237,9 +240,9 @@ public class ComandaActivity extends AppCompatActivity {
                             ContentValues updateValues = new ContentValues();
                             updateValues.put("quantidade", novaQuantidade);
 
-                            db2.update("itens", updateValues, "id = ?", new String[]{String.valueOf(itemId)});
+                            db2.update("itens_comanda", updateValues, "id = ?", new String[]{String.valueOf(itemId)});
                         } else {
-                            db2.insert("itens", null, values);
+                            db2.insert("itens_comanda", null, values);
                         }
                         cursorCheck.close();
                         carregarItens();
@@ -259,7 +262,7 @@ public class ComandaActivity extends AppCompatActivity {
                     SQLiteDatabase db = dbHelper.getWritableDatabase();
 
                     // Buscar os itens da comanda atual
-                    Cursor cursor = db.rawQuery("SELECT descricao, quantidade, preco FROM itens WHERE cliente_id = ?", new String[]{String.valueOf(clienteId)});
+                    Cursor cursor = db.rawQuery("SELECT descricao, quantidade, preco FROM itens_comanda WHERE cliente_id = ?", new String[]{String.valueOf(clienteId)});
                     while (cursor.moveToNext()) {
                         String desc = cursor.getString(0);
                         int qtd = cursor.getInt(1);
@@ -270,13 +273,13 @@ public class ComandaActivity extends AppCompatActivity {
                         v.put("descricao", desc);
                         v.put("quantidade", qtd);
                         v.put("preco", preco);
-                        v.put("data_hora", String.valueOf(System.currentTimeMillis()));
+                        v.put("data_hora", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date()));
                         db.insert("itens_fechados", null, v);
                     }
                     cursor.close();
 
                     // Apagar da tabela principal
-                    db.delete("itens", "cliente_id = ?", new String[]{String.valueOf(clienteId)});
+                    db.delete("itens_comanda", "cliente_id = ?", new String[]{String.valueOf(clienteId)});
                     carregarItens();
                 })
                 .setNegativeButton("Cancelar", null)

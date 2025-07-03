@@ -20,4 +20,8 @@
         android:id="@+id/nav_configuracoes"
         android:title="Configurações"
         android:icon="@android:drawable/ic_menu_preferences" />
+    <item
+        android:id="@+id/nav_relatorio"
+        android:title="Relatório"
+        android:icon="@drawable/outline_contract_24" />
 </menu>

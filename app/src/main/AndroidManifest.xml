@@ -15,6 +15,7 @@
         <activity android:name=".activities.HistoricoActivity" />
         <activity android:name=".activities.CadastroItemActivity" />
         <activity android:name=".activities.ConfiguracoesActivity" />
+        <activity android:name=".activities.RelatorioActivity" />
 
         <activity
             android:name=".activities.MainActivity"

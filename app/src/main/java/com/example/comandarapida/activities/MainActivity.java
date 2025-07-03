@@ -12,6 +12,7 @@ import android.text.InputType;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -63,6 +64,9 @@ public class MainActivity extends AppCompatActivity {
         recycler.setAdapter(adapter);
 
         carregarClientes();
+
+        mostrarResumoDoDia();
+
         SearchView searchView = findViewById(R.id.searchCliente);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -99,6 +103,8 @@ public class MainActivity extends AppCompatActivity {
                 mostrarDialogoSenha();
             }else if (id == R.id.nav_configuracoes) {
                 startActivity(new Intent(this, ConfiguracoesActivity.class));
+            }else if (id == R.id.nav_relatorio) {
+                startActivity(new Intent(this, RelatorioActivity.class));
             }
 
             drawerLayout.closeDrawers();
@@ -112,6 +118,24 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mostrarResumoDoDia(); // atualiza quando volta para tela inicial
+    }
+
+    private void mostrarResumoDoDia() {
+        Cursor cursor = dbHelper.getResumoDoDia();
+        if (cursor.moveToFirst()) {
+            int totalQtd = cursor.getInt(cursor.getColumnIndexOrThrow("totalQtd"));
+            double totalValor = cursor.getDouble(cursor.getColumnIndexOrThrow("totalValor"));
+
+            TextView resumoDia = findViewById(R.id.txtResumoDia);
+            resumoDia.setText("Hoje: " + totalQtd + " und • R$ " + String.format("%.2f", totalValor));
+        }
+        cursor.close();
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -191,7 +215,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void apagarTudo() {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        db.delete("itens", null, null);
+        db.delete("itens_comanda", null, null);
         db.delete("clientes", null, null);
         db.delete("itens_fechados", null, null);
         carregarClientes();

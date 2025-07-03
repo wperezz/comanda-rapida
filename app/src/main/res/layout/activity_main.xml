@@ -13,6 +13,17 @@
         android:layout_height="match_parent"
         android:padding="16dp">
 
+        <TextView
+            android:id="@+id/txtResumoDia"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hoje: 0 und • R$ 0,00"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textColor="@color/teal_700"
+            android:gravity="center"
+            android:paddingBottom="8dp"/>
+
         <androidx.appcompat.widget.SearchView
             android:id="@+id/searchCliente"
             android:layout_width="match_parent"
