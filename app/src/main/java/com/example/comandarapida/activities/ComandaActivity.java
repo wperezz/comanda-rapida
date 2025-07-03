@@ -162,9 +162,29 @@ public class ComandaActivity extends AppCompatActivity {
                         values.put("preco", escolhido.preco);
 
                         SQLiteDatabase db2 = dbHelper.getWritableDatabase();
-                        db2.insert("itens", null, values);
 
+                        // Verificar se o item já existe na comanda do cliente
+                        Cursor cursorCheck = db2.rawQuery(
+                                "SELECT id, quantidade FROM itens WHERE cliente_id = ? AND descricao = ? AND preco = ?",
+                                new String[]{String.valueOf(clienteId), escolhido.descricao, String.valueOf(escolhido.preco)}
+                        );
+
+                        if (cursorCheck.moveToFirst()) {
+                            // Item já existe, atualizar quantidade
+                            int itemId = cursorCheck.getInt(0);
+                            int quantidadeAtual = cursorCheck.getInt(1);
+                            int novaQuantidade = quantidadeAtual + qtd;
+
+                            ContentValues updateValues = new ContentValues();
+                            updateValues.put("quantidade", novaQuantidade);
+
+                            db2.update("itens", updateValues, "id = ?", new String[]{String.valueOf(itemId)});
+                        } else {
+                            db2.insert("itens", null, values);
+                        }
+                        cursorCheck.close();
                         carregarItens();
+
                     }
                 })
                 .setNegativeButton("Cancelar", null)
