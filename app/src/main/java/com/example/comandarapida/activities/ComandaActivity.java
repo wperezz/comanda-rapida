@@ -3,8 +3,10 @@ package com.example.comandarapida.activities;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
 import android.widget.*;
@@ -19,6 +21,7 @@ import com.example.comandarapida.adapters.ItemAdapter;
 import com.example.comandarapida.database.DBHelper;
 import com.example.comandarapida.models.Item;
 
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -247,12 +250,63 @@ public class ComandaActivity extends AppCompatActivity {
                         cursorCheck.close();
                         carregarItens();
 
+                        // Buscar WhatsApp do cliente
+                        String whatsapp;
+                        SQLiteDatabase db3 = dbHelper.getReadableDatabase();
+                        Cursor cursorWhats = db3.rawQuery("SELECT num_whatsapp FROM clientes WHERE id = ?", new String[]{String.valueOf(clienteId)});
+                        if (cursorWhats.moveToFirst()) {
+                            whatsapp = cursorWhats.getString(0);
+                        } else {
+                            whatsapp = null;
+                        }
+                        cursorWhats.close();
+
+                        // Perguntar se deseja enviar por WhatsApp
+                        if (whatsapp != null && !whatsapp.trim().isEmpty()) {
+                            new AlertDialog.Builder(this)
+                                    .setTitle("Enviar para o cliente?")
+                                    .setMessage("Deseja enviar a comanda atual para o WhatsApp do cliente?")
+                                    .setPositiveButton("Sim", (dialog1, which1) -> {
+                                        enviarComandaPorWhatsapp(whatsapp);
+                                    })
+                                    .setNegativeButton("Não", null)
+                                    .show();
+                        }
+
                     }
                 })
                 .setNegativeButton("Cancelar", null)
                 .show();
     }
 
+    private void enviarComandaPorWhatsapp(String numero) {
+        StringBuilder mensagem = new StringBuilder();
+        mensagem.append("🧾 *Comanda - ").append(clienteNome).append("*\n\n");
+
+        for (Item item : itens) {
+            mensagem.append("• ")
+                    .append(item.getDescricao())
+                    .append(" x").append(item.getQuantidade())
+                    .append(" - R$ ").append(String.format("%.2f", item.getTotal()))
+                    .append("\n");
+        }
+
+        double total = 0.0;
+        for (Item item : itens) {
+            total += item.getTotal();
+        }
+        mensagem.append("\n*Total:* R$ ").append(String.format("%.2f", total));
+
+        try {
+            String url = "https://wa.me/55" + numero.replaceAll("[^\\d]", "") +
+                    "?text=" + URLEncoder.encode(mensagem.toString(), "UTF-8");
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(url));
+            startActivity(intent);
+        } catch (Exception e) {
+            Toast.makeText(this, "Erro ao abrir o WhatsApp", Toast.LENGTH_SHORT).show();
+        }
+    }
 
     private void finalizarConta() {
         new AlertDialog.Builder(this)

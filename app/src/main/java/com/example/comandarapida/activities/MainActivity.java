@@ -12,6 +12,7 @@ import android.text.InputType;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -165,17 +166,32 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void mostrarDialogoNovoCliente() {
-        EditText input = new EditText(this);
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        EditText inputNome = new EditText(this);
+        inputNome.setHint("Nome do Cliente");
+        inputNome.setInputType(InputType.TYPE_CLASS_TEXT);
+
+        EditText inputWhatsapp = new EditText(this);
+        inputWhatsapp.setHint("WhatsApp (com DDD)");
+        inputWhatsapp.setInputType(InputType.TYPE_CLASS_PHONE);
+
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setPadding(50, 40, 50, 10);
+        layout.addView(inputNome);
+        layout.addView(inputWhatsapp);
+
         new AlertDialog.Builder(this)
-                .setTitle("Nome do Cliente")
-                .setView(input)
+                .setTitle("Novo Cliente")
+                .setView(layout)
                 .setPositiveButton("Salvar", (dialog, which) -> {
-                    String nome = input.getText().toString().trim();
+                    String nome = inputNome.getText().toString().trim();
+                    String num_whatsapp = inputWhatsapp.getText().toString().trim();
+
                     if (!nome.isEmpty()) {
                         SQLiteDatabase db = dbHelper.getWritableDatabase();
                         ContentValues values = new ContentValues();
                         values.put("nome", nome);
+                        values.put("num_whatsapp", num_whatsapp); // novo campo
                         db.insert("clientes", null, values);
                         carregarClientes();
                     }
@@ -183,6 +199,7 @@ public class MainActivity extends AppCompatActivity {
                 .setNegativeButton("Cancelar", null)
                 .show();
     }
+
 
     private void abrirComanda(Cliente cliente) {
         Intent intent = new Intent(this, ComandaActivity.class);
