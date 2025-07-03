@@ -15,23 +15,30 @@ import java.util.List;
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
     private final List<Item> itens;
+    private final View.OnClickListener onClickListener;
+    private final View.OnLongClickListener onLongClickListener;
 
-    public ItemAdapter(List<Item> itens) {
+    public ItemAdapter(List<Item> itens, View.OnClickListener onClickListener, View.OnLongClickListener onLongClickListener) {
         this.itens = itens;
+        this.onClickListener = onClickListener;
+        this.onLongClickListener = onLongClickListener;
     }
 
     @NonNull
     @Override
-    public ItemAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_item, parent, false);
         return new ViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ItemAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Item item = itens.get(position);
         holder.txtDescricao.setText(item.descricao);
         holder.txtQtdPreco.setText(item.quantidade + " x R$ " + String.format("%.2f", item.preco));
+        holder.itemView.setTag(item);
+        holder.itemView.setOnClickListener(onClickListener);
+        holder.itemView.setOnLongClickListener(onLongClickListener);
     }
 
     @Override

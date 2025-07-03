@@ -48,7 +48,13 @@ public class ComandaActivity extends AppCompatActivity {
 
         RecyclerView recycler = findViewById(R.id.recyclerItens);
         recycler.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new ItemAdapter(itens);
+        adapter = new ItemAdapter(itens,
+                v -> {}, // clique normal não faz nada por enquanto
+                v -> {
+                    Item item = (Item) v.getTag();
+                    mostrarDialogoEditarOuExcluir(item);
+                    return true;
+                });
         recycler.setAdapter(adapter);
 
         txtResumoComanda = findViewById(R.id.txtResumoComanda);
@@ -81,6 +87,57 @@ public class ComandaActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         getOnBackPressedDispatcher().onBackPressed();
         return true;
+    }
+
+    private void mostrarDialogoEditarOuExcluir(Item item) {
+        String[] opcoes = {"Editar quantidade", "Excluir item"};
+
+        new AlertDialog.Builder(this)
+                .setTitle("Escolha uma ação")
+                .setItems(opcoes, (dialog, which) -> {
+                    if (which == 0) {
+                        mostrarDialogoEditarQuantidade(item);
+                    } else if (which == 1) {
+                        excluirItem(item);
+                    }
+                })
+                .show();
+    }
+
+    private void mostrarDialogoEditarQuantidade(Item item) {
+        EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_NUMBER);
+        input.setHint("Nova quantidade");
+        input.setText(String.valueOf(item.getQuantidade()));
+
+        new AlertDialog.Builder(this)
+                .setTitle("Editar quantidade")
+                .setView(input)
+                .setPositiveButton("Salvar", (dialog, which) -> {
+                    int novaQtd = Integer.parseInt(input.getText().toString().trim());
+                    ContentValues values = new ContentValues();
+                    values.put("quantidade", novaQtd);
+
+                    SQLiteDatabase db = dbHelper.getWritableDatabase();
+                    db.update("itens", values, "id = ?", new String[]{String.valueOf(item.id)});
+
+                    carregarItens();
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+    private void excluirItem(Item item) {
+        new AlertDialog.Builder(this)
+                .setTitle("Confirmar exclusão")
+                .setMessage("Deseja realmente excluir este item?")
+                .setPositiveButton("Sim", (dialog, which) -> {
+                    SQLiteDatabase db = dbHelper.getWritableDatabase();
+                    db.delete("itens", "id = ?", new String[]{String.valueOf(item.id)});
+                    carregarItens();
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
     }
 
     private void atualizarResumo() {
